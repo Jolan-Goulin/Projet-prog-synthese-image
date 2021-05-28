@@ -1,20 +1,30 @@
-mon_executable: Main.o colors.o frtustrum_culling.o geometrie.o lecture.o quadtree.o
-	g++ -o mon_executable geometrie.o colors.o lecture.o frtustrum_culling.o quadtree.o Main.o
+CC		= g++
+CFLAGS	= -Wall -O2 -g
+LDFLAGS	= -lSDL -lm
 
-geometrie.o: geometry.cpp geometry.h
-	g++ -o geometry.o -c geometry.cpp -Wall -ansi
+BIN_DIR	= bin
+INC_DIR = -I include
+SRC_DIR	= src
+OBJ_DIR	= obj
 
-quadtree.o: quadtree.cpp quadtree.h
-	g++ -o quadtree.o -c quadtree.cpp -Wall -ansi
 
-colors.o: colors.cpp colors.h
-	g++ -o colors.o -c colors.cpp -Wall -ansi
+SRC_FILES 	= $(shell find $(SRC_DIR)/ -type f -name '*.cpp')
+OBJ_FILES 	= $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o, $(SRC_FILES))
+EXEC_BIN	= tamere.out
 
-lecture.o: lecture.cpp lecture.h main.h
-	g++ -o lecture.o -c lecture.cpp -Wall -ansi
 
-frustum_culling.o: frustum_culling.cpp geometry.h quadtree.h 
-	g++ -o frustum_culling.o -c frustum_culling.cpp -Wall -ansi
+all : $(OBJ_FILES)
 
-Main.o: Main.cpp main.h quadtree.cpp quadtree.h geometry.cpp geometry.h colors.cpp colors.h lecture.cpp lecture.h  
-	g++ -o Main.o -c Main.cpp -Wall -ansi
+main : $(OBJ_FILES)
+	@mkdir -p $(BIN_DIR)/
+	$(CC) -o $(BIN_DIR)/$(EXEC_BIN) $(OBJ_FILES) $(LDFLAGS)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	mkdir -p "$(@D)"
+	$(CC) -c $< -o $@ $(CFLAGS) $(INC_DIR)
+
+clean :
+	rm -rf *~
+	rm -rf $(SRC_DIR)/*/*~
+	rm -rf $(OBJ_DIR)/
+	rm -rf $(BIN_DIR)/*
