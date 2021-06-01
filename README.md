@@ -1,1 +1,0 @@
-# Projet-prog-synthese-image
